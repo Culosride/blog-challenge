@@ -5,7 +5,7 @@
 
   <% posts.forEach(post => { %>
     <h1><%= post.title %></h1>
-    <p><%= post.body %></p>
+    <p><%= post.body.slice(0, 100) + "..." %></p>
   <%  }) %>
 
 <%- include("partials/footer") -%>

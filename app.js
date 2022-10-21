@@ -37,17 +37,18 @@ app.get("/compose", (req, res) => {
 app.post("/compose", (req, res) => {
   const post = {
     title: req.body.postTitle,
-    body: req.body.postBody
+    body: req.body.postBody,
   }
   posts.push(post)
   res.redirect("/")
 })
 
-app.get("/posts/:postId", (req, res) => {
+app.get("/posts/:postTitle", (req, res) => {
+  const urlParam = _.lowerCase(req.params.postTitle.toLowerCase())
   posts.forEach(post => {
-    const title = _.lowerCase(post.title)
-    const urlParam = _.lowerCase(req.params.postId)
-    title === urlParam ? console.log("ok") : console.log("not ok")
+    const title = _.lowerCase(post.title.toLowerCase())
+    const content = post.body
+    if((title) === (urlParam)) res.render("post", {title: post.title, body: content})
   })
 })
 
