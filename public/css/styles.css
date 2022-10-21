@@ -1,6 +1,7 @@
 .container-fluid {
   padding-top: 70px;
   padding-bottom: 70px;
+  justify-content: space-around !important;
 }
 
 .navbar {
@@ -11,6 +12,9 @@
   margin-bottom: 0;
   font-size: 12px;
   letter-spacing: 5px;
+}
+.navbar p {
+  margin: 0;
 }
 
 .navbar-nav li a:hover {
@@ -33,4 +37,8 @@
   margin-top: 25px;
   font-size: 12px;
   color: #fff;
+}
+
+h1 {
+  margin: 24px auto;
 }
