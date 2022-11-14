@@ -21,22 +21,61 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({extended: true}));
 
-const posts = []
+const regex = new RegExp("^$|^[ \t]+$");
 
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/blogDB');
-  
-  // use `await mongoose.connect('mongodb://user:password@localhost:27017/test');` if your database has auth enabled
+  await mongoose.connect('mongodb://localhost:27017/blogDB').catch(err => console.log("catch on connect", err));
+
+  const postSchema = new mongoose.Schema({
+    title: {
+      type: String,
+      required: [true, "Title required"]
+    },
+    body: {
+      type: String,
+      required: [true, "Title required"]
+    }
+  })
+
+  const Post = mongoose.model("Post", postSchema)
+
+  app.get("/", async (req, res) => {
+    const posts = await Post.find()
+    res.render("home", {
+      content: homeStartingContent,
+      posts: posts
+    });
+  })
+
+  app.post("/compose", (req, res) => {
+    const title = req.body.postTitle
+    const body = req.body.postBody
+    const newPost = new Post({
+      title: title,
+      body: body
+    })
+
+    if(regex.test(title) || regex.test(body)) {
+      res.redirect("/compose")
+    } else {
+      newPost.save()
+      res.redirect("/")
+    }
+  })
+
+  app.get("/posts/:postTitle", async (req, res) => {
+    const urlParam = _.lowerCase(req.params.postTitle.toLowerCase())
+    const posts = await Post.find()
+    posts.forEach(post => {
+      const title = _.lowerCase(post.title.toLowerCase())
+      const content = post.body
+      if((title) === (urlParam)) res.render("post", {title: post.title, body: content})
+    })
+  })
 }
 
-app.get("/", (req, res) => {
-  res.render("home", {
-    content: homeStartingContent,
-    posts: posts
-  });
-})
 
 app.get("/about", (req, res) => {
   res.render("about", {content: aboutContent});
@@ -49,24 +88,6 @@ app.get("/contact", (req, res) => {
 
 app.get("/compose", (req, res) => {
   res.render("compose", {content: ""});
-})
-
-app.post("/compose", (req, res) => {
-  const post = {
-    title: req.body.postTitle,
-    body: req.body.postBody,
-  }
-  posts.push(post)
-  res.redirect("/")
-})
-
-app.get("/posts/:postTitle", (req, res) => {
-  const urlParam = _.lowerCase(req.params.postTitle.toLowerCase())
-  posts.forEach(post => {
-    const title = _.lowerCase(post.title.toLowerCase())
-    const content = post.body
-    if((title) === (urlParam)) res.render("post", {title: post.title, body: content})
-  })
 })
 
 app.listen(3000);
