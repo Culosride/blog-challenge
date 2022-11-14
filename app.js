@@ -26,7 +26,7 @@ const regex = new RegExp("^$|^[ \t]+$");
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/blogDB').catch(err => console.log("catch on connect", err));
+  await mongoose.connect('mongodb://localhost:27017/blogDB');
 
   const postSchema = new mongoose.Schema({
     title: {
