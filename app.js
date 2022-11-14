@@ -49,7 +49,7 @@ async function main() {
     });
   })
 
-  app.post("/compose", (req, res) => {
+  app.post("/compose", async (req, res) => {
     const title = req.body.postTitle
     const body = req.body.postBody
     const newPost = new Post({
@@ -60,20 +60,16 @@ async function main() {
     if(regex.test(title) || regex.test(body)) {
       res.redirect("/compose")
     } else {
-      newPost.save()
+      await newPost.save()
       res.redirect("/")
     }
   })
 
-  app.get("/posts/:postTitle", async (req, res) => {
-    const urlParam = _.lowerCase(req.params.postTitle.toLowerCase())
-    const posts = await Post.find()
-    posts.forEach(post => {
-      const title = _.lowerCase(post.title.toLowerCase())
-      const content = post.body
-      if((title) === (urlParam)) res.render("post", {title: post.title, body: content})
+  app.get("/posts/:id", async (req, res) => {
+    const id = req.params.id
+    const [post] = await Post.find({_id: id})
+    res.render("post", {title: post.title, body: post.body})
     })
-  })
 }
 
 
