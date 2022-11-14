@@ -1,8 +1,17 @@
-const express = require("express");
-const sass = require("sass");
-const path = require("path");
+import express from "express";
+import mongoose from "mongoose";
+
+// import and use the dirname() method from the path module.
+// The dirname method takes a path as a parameter and returns the directory name of the path.
+import path from "path";
+// fileURLToPath method from the url module to get the filename.
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const _ = require('lodash');
+import lodash from "lodash"
+const _ = lodash
 
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
 const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
@@ -13,6 +22,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({extended: true}));
 
 const posts = []
+
+main().catch(err => console.log(err));
+
+async function main() {
+  await mongoose.connect('mongodb://localhost:27017/blogDB');
+  
+  // use `await mongoose.connect('mongodb://user:password@localhost:27017/test');` if your database has auth enabled
+}
 
 app.get("/", (req, res) => {
   res.render("home", {
@@ -52,4 +69,4 @@ app.get("/posts/:postTitle", (req, res) => {
   })
 })
 
-app.listen(5173);
+app.listen(3000);
